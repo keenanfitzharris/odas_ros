@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include "odas_ros/hop.h"
+#include <fstream>
 
 extern "C" {
     #include "odas/odas.h"
@@ -12,6 +13,13 @@ void process_hops_msg(const odas_ros::hop::ConstPtr& ros_msg, msg_hops_obj* in_m
     in_msg->timeStamp = ros_msg->timeStamp;
     in_msg->hops->hopSize = ros_msg->hopSize;
     in_msg->hops->nSignals = ros_msg->nSignals;
+
+    if(in_msg->fS == 0) {
+
+        ROS_INFO("Signal ended........");
+        ros::shutdown();
+        return;
+    }
 
     for (int iSample = 0; iSample < in_msg->hops->hopSize; iSample++) {
 
@@ -52,6 +60,20 @@ int main(int argc, char **argv)
     }
 
     char *filename = argv[1];
+
+
+    std::ofstream test_file;
+    test_file.open(filename);
+
+    if(!test_file.is_open()) {
+
+        ROS_ERROR("Can't open specified output file");
+        return -1;
+    }
+
+    else {
+        test_file.close();
+    }
 
 
     // Get parameters from server

@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include "odas_ros/hop.h"
+#include <fstream>
 
 extern "C" {
 	#include "odas/odas.h"
@@ -33,6 +34,19 @@ int main(int argc, char **argv)
     }
 
     char *filename = argv[1];
+
+    std::ifstream test_file;
+    test_file.open(filename);
+
+    if(!test_file.is_open()) {
+
+        ROS_ERROR("Can't open specified input file");
+        return -1;
+    }
+
+    else {
+        test_file.close();
+    }
 
 
     // Get parameters from server
@@ -106,7 +120,7 @@ int main(int argc, char **argv)
 
     ROS_INFO("Waiting for subscribers........");
 
-    while(ros_publisher.getNumSubscribers() < 1) {
+    while(ros_publisher.getNumSubscribers() < 1 && ros::ok()) {
 
         sleep(1);
     }
@@ -123,8 +137,16 @@ int main(int argc, char **argv)
     while(return_value == 0 && ros::ok()) {
 
         return_value = src_hops_process(src_obj);
-
         odas_ros::hop ros_msg_out;
+
+        if(return_value != 0) {
+
+            ros_msg_out.fS = 0;
+            ros_publisher.publish(ros_msg_out);
+
+            ROS_INFO("Signal ended........");
+            break;
+        }
 
         ros_msg_out.timeStamp = msg_out->timeStamp;
         ros_msg_out.nSignals = msg_out->hops->nSignals;
@@ -142,7 +164,6 @@ int main(int argc, char **argv)
         }
 
         ros_publisher.publish(ros_msg_out);
-
         playing_rate.sleep();
     }
 
