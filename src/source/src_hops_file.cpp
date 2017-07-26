@@ -8,62 +8,71 @@ extern "C" {
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "hops_file");
+    ros::init(argc, argv, "src_hops_file");
+
+    ROS_INFO("Initializing source hops file........");
+
+    ros::NodeHandle node_handle("~");
+    ros::NodeHandle public_handle;
 
 
-    ROS_INFO("Initializing hops file........");
-
-    ros::NodeHandle node_handle;
-    ros::Publisher ros_publisher = node_handle.advertise<odas_ros::hop>("hops_raw_in", 250);
-
-    // Get filename from arguments
+    // Get filame from arguments
 
     ROS_INFO("Reading filename........");
 
     if(argc < 2) {
 
-        ROS_ERROR("Please provide the source filename");
+        ROS_ERROR("Please provide source filename");
         return -1;
     }
 
     else if(argc > 2) {
 
-        ROS_ERROR("Too many arguments, expecting only filename");
+        ROS_ERROR("Too many arguments, expecting only source filename");
         return -1;
     }
 
     char *filename = argv[1];
 
 
-    // Get raw parameters from server
+    // Get parameters from server
 
     ROS_INFO("Retreiving parameters........");
 
-    int fs, hopSize, nChannels, nBits;
+    int fS, hopSize, nChannels, nBits;
+    std::string outTopic;
 
-    if(!node_handle.getParam("config/raw/fs", fs)) {
+    if(!node_handle.getParam("config/fS", fS)) {
 
-        ROS_ERROR("Couln'd retrieve config/raw/fs");
+        ROS_ERROR("Couln'd retrieve config/fS");
         return -1;
     }
 
-    if(!node_handle.getParam("config/raw/hopSize", hopSize)) {
+    if(!node_handle.getParam("config/hopSize", hopSize)) {
 
-        ROS_ERROR("Couln'd retrieve config/raw/hopSize");
+        ROS_ERROR("Couln'd retrieve config/hopSize");
         return -1;
     }
 
-    if(!node_handle.getParam("config/raw/nChannels", nChannels)) {
+    if(!node_handle.getParam("config/nChannels", nChannels)) {
 
-        ROS_ERROR("Couln'd retrieve config/raw/nChannels");
+        ROS_ERROR("Couln'd retrieve config/nChannels");
         return -1;
     }
 
-    if(!node_handle.getParam("config/raw/nBits", nBits)) {
+    if(!node_handle.getParam("config/nBits", nBits)) {
 
-        ROS_ERROR("Couln'd retrieve config/raw/nBits");
+        ROS_ERROR("Couln'd retrieve config/nBits");
         return -1;
     }
+
+    if(!node_handle.getParam("outTopic", outTopic)) {
+
+        ROS_ERROR("Couln'd retrieve outTopic");
+        return -1;
+    }
+
+    ros::Publisher ros_publisher = public_handle.advertise<odas_ros::hop>(outTopic, 2000);
 
 
     // Contruct objects
@@ -74,12 +83,12 @@ int main(int argc, char **argv)
 
     hops_cfg->format = format_construct_bin(nBits);
     hops_cfg->interface = interface_construct_file(filename);
-    hops_cfg->fS = fs;
+    hops_cfg->fS = fS;
 
 
     msg_hops_cfg* msg_cfg = msg_hops_cfg_construct();
 
-    msg_cfg->fS = fs;
+    msg_cfg->fS = fS;
     msg_cfg->hopSize = hopSize;
     msg_cfg->nChannels = nChannels;
 
@@ -93,11 +102,23 @@ int main(int argc, char **argv)
     src_hops_open(src_obj);
 
 
+    // Wait for subscribers
+
+    ROS_INFO("Waiting for subscribers........");
+
+    while(ros_publisher.getNumSubscribers() < 1) {
+
+        sleep(1);
+    }
+
+
     // Proccess signal
 
     ROS_INFO("Processing signal........");
 
     int return_value = 0;
+
+    ros::Rate playing_rate(fS/hopSize);
 
     while(return_value == 0 && ros::ok()) {
 
@@ -108,7 +129,7 @@ int main(int argc, char **argv)
         ros_msg_out.timeStamp = msg_out->timeStamp;
         ros_msg_out.nSignals = msg_out->hops->nSignals;
         ros_msg_out.hopSize = msg_out->hops->hopSize;
-        ros_msg_out.fs = msg_out->fS;
+        ros_msg_out.fS = msg_out->fS;
 
         ros_msg_out.data = std::vector<float>(ros_msg_out.nSignals * ros_msg_out.hopSize);
 
@@ -121,7 +142,8 @@ int main(int argc, char **argv)
         }
 
         ros_publisher.publish(ros_msg_out);
-        ros::spinOnce();
+
+        playing_rate.sleep();
     }
 
     src_hops_disconnect(src_obj);

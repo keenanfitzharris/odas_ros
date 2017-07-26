@@ -1,0 +1,17 @@
+<launch>
+	<arg name="output"/>
+
+	<group ns="odas">
+
+		<node pkg="odas_ros" name="sink_file" type="snk_hops_file" args="$(arg output)" output="screen">
+
+			<param name="inTopic" value="raw_hops"/>
+
+			<param name="config/fS" value="44100"/>
+			<param name="config/hopSize" value="256"/>
+			<param name="config/nChannels" value="2"/>
+			<param name="config/nBits" value="16"/>
+		</node>
+
+	</group>
+</launch>
