@@ -1,7 +1,18 @@
 <launch>
+	<arg name="input"/>
 	<arg name="output"/>
 
 	<group ns="odas">
+
+		<node pkg="odas_ros" name="source_file" type="src_hops_file" args="$(arg input)" output="screen">
+
+			<param name="outTopic" value="raw_hops"/>
+
+			<param name="config/fS" value="44100"/>
+			<param name="config/hopSize" value="256"/>
+			<param name="config/nChannels" value="2"/>
+			<param name="config/nBits" value="16"/>
+		</node>
 
 		<node pkg="odas_ros" name="mapping" type="mod_mapping" output="screen">
 
@@ -22,7 +33,7 @@
 
 			<param name="config/fS" value="44100"/>
 			<param name="config/hopSize" value="256"/>
-			<param name="config/nChannels" value="1"/>
+			<param name="config/nChannels" value="2"/>
 			<param name="config/nBits" value="16"/>
 		</node>
 

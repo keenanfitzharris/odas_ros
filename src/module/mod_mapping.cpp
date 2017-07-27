@@ -148,11 +148,22 @@ int main(int argc, char **argv)
     mod_mapping_connect(mod_mapping, in_msg, out_msg);
 
 
+    // Wait for subscribers
+
+    ROS_INFO("Waiting for subscribers........");
+
+    ros::Publisher ros_publisher = public_handle.advertise<odas_ros::hop>(outTopic, 2000);
+
+    while(ros_publisher.getNumSubscribers() < 1 && ros::ok()) {
+
+        sleep(1);
+    }
+
+
     // Proccess signal
 
     ROS_INFO("Processing signal........");
 
-    ros::Publisher ros_publisher = public_handle.advertise<odas_ros::hop>(outTopic, 2000);
     ros::Subscriber ros_subscriber = public_handle.subscribe<odas_ros::hop>(inTopic, 2000, boost::bind(process_hops_msg, _1, in_msg, out_msg, mod_mapping, ros_publisher));
     ros::spin();
 
