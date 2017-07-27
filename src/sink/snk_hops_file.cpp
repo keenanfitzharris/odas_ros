@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 
     if(argc < 2) {
 
-        ROS_ERROR("Please provide source filename");
+        ROS_ERROR("Please provide sink filename");
         return -1;
     }
 
