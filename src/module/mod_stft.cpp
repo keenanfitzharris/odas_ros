@@ -41,15 +41,6 @@ void process_hops_msg(const odas_ros::hop::ConstPtr& in_ros_msg, msg_hops_obj* i
 
     out_ros_msg.timeStamp = out_msg->timeStamp;
     out_ros_msg.fS = out_msg->fS;
-    /*
-     * TODO PATCH
-     * Patching from msg_spectra fS config not used!!
-     * TODO PATCH
-     * */
-    out_ros_msg.fS = in_msg->fS;
-    /*
-     * TODO PATCH
-     * */
     out_ros_msg.nSignals = out_msg->freqs->nSignals;
     out_ros_msg.halfFrameSize = out_msg->freqs->halfFrameSize;
 

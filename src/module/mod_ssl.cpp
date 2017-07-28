@@ -341,12 +341,12 @@ int main(int argc, char **argv)
     ROS_INFO("Waiting for subscribers........");
 
     ros::Publisher ros_publisher = public_handle.advertise<odas_ros::pot>(out_topic, 2000);
-/*
+
     while(ros_publisher.getNumSubscribers() < 1 && ros::ok()) {
 
         sleep(1);
     }
-*/
+
 
     // Proccess signal
 

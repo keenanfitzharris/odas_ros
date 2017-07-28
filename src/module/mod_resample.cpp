@@ -35,25 +35,34 @@ void process_hops_msg(const odas_ros::hop::ConstPtr& in_ros_msg, msg_hops_obj* i
     }
 
 
-    mod_resample_process(mod_resample);
+    mod_resample_process_push(mod_resample);
 
+    int resample_return;
+    do {
 
-    out_ros_msg.fS = out_msg->fS;
-    out_ros_msg.timeStamp = out_msg->timeStamp;
-    out_ros_msg.hopSize = out_msg->hops->hopSize;
-    out_ros_msg.nSignals = out_msg->hops->nSignals;
+        resample_return = mod_resample_process_pop(mod_resample);
 
-    out_ros_msg.data = std::vector<float>(out_ros_msg.nSignals * out_ros_msg.hopSize);
+        if(resample_return == 0) {
 
-    for (int iSample = 0; iSample < out_ros_msg.hopSize; iSample++) {
+            out_ros_msg.fS = out_msg->fS;
+            out_ros_msg.timeStamp = out_msg->timeStamp;
+            out_ros_msg.hopSize = out_msg->hops->hopSize;
+            out_ros_msg.nSignals = out_msg->hops->nSignals;
 
-        for (int iChannel = 0; iChannel < out_ros_msg.nSignals; iChannel++) {
+            out_ros_msg.data = std::vector<float>(out_ros_msg.nSignals * out_ros_msg.hopSize);
 
-            out_ros_msg.data[iSample + iChannel*out_ros_msg.hopSize] = out_msg->hops->array[iChannel][iSample];
+            for (int iSample = 0; iSample < out_ros_msg.hopSize; iSample++) {
+
+                for (int iChannel = 0; iChannel < out_ros_msg.nSignals; iChannel++) {
+
+                    out_ros_msg.data[iSample + iChannel*out_ros_msg.hopSize] = out_msg->hops->array[iChannel][iSample];
+                }
+            }
+
+            ros_publisher.publish(out_ros_msg);
         }
-    }
 
-    ros_publisher.publish(out_ros_msg);
+    } while(resample_return == 0);
 }
 
 

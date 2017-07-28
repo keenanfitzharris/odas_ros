@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(odas_ros)
 
+set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+
 # Root folder of ODAS library
 set(ODAS_LOCATION $ENV{HOME}/Documents/odas)
 
@@ -49,6 +51,23 @@ add_dependencies(
 
 target_link_libraries(
 	src_hops_file
+	${catkin_LIBRARIES}
+	${ODAS_LOCATION}/lib/libodas.so
+)
+
+# Hops from soundcard
+add_executable(
+	src_soundcard
+	src/source/src_soundcard.cpp
+)
+
+add_dependencies(
+	src_soundcard
+	mars_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+	src_soundcard
 	${catkin_LIBRARIES}
 	${ODAS_LOCATION}/lib/libodas.so
 )
