@@ -149,6 +149,24 @@ target_link_libraries(
 )
 
 
+# SST module
+add_executable(
+	mod_sst
+	src/module/mod_sst.cpp
+)
+
+add_dependencies(
+	mod_sst
+	mars_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+	mod_sst
+	${catkin_LIBRARIES}
+	${ODAS_LOCATION}/lib/libodas.so
+)
+
+
 #
 # Build sinks
 #
