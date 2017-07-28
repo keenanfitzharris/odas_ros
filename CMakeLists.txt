@@ -13,6 +13,7 @@ find_package(
 	FILES
 	hop.msg
 	spectra.msg
+	pot.msg
  )
 
  generate_messages()
@@ -35,7 +36,7 @@ include_directories(
 # Build sources
 #
 
-# Raw hops from file
+# Hops from file
 add_executable(
 	src_hops_file
 	src/source/src_hops_file.cpp
@@ -75,11 +76,65 @@ target_link_libraries(
 )
 
 
+# Resample module
+add_executable(
+	mod_resample
+	src/module/mod_resample.cpp
+)
+
+add_dependencies(
+	mod_resample
+	mars_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+	mod_resample
+	${catkin_LIBRARIES}
+	${ODAS_LOCATION}/lib/libodas.so
+)
+
+
+# STFT module
+add_executable(
+	mod_stft
+	src/module/mod_stft.cpp
+)
+
+add_dependencies(
+	mod_stft
+	mars_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+	mod_stft
+	${catkin_LIBRARIES}
+	${ODAS_LOCATION}/lib/libodas.so
+)
+
+
+# SSL module
+add_executable(
+	mod_ssl
+	src/module/mod_ssl.cpp
+)
+
+add_dependencies(
+	mod_ssl
+	mars_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+	mod_ssl
+	${catkin_LIBRARIES}
+	${ODAS_LOCATION}/lib/libodas.so
+)
+
+
 #
 # Build sinks
 #
 
-# Raw hops to file
+# Hops to file
 add_executable(
 	snk_hops_file
 	src/sink/snk_hops_file.cpp

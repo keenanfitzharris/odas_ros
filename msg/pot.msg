@@ -1,5 +1,4 @@
 uint64 timeStamp
 uint16 fS
-uint16 nSignals
-uint16 halfFrameSize
+uint16 nPots
 float32[] data
