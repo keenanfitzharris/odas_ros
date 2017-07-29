@@ -90,7 +90,9 @@
 
 
 			<param name="general/epsilon" value="1E-20"/>
-			<param name="general/frameSize" value="1024"/>
+
+			<param name="general/size/frameSize" value="1024"/>
+			<param name="general/size/hopSize" value="512"/>
 
 			<param name="general/samplerate/mu" value="44100"/>
 			<param name="general/samplerate/sigma2" value="0.01"/>

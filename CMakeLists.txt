@@ -16,6 +16,7 @@ find_package(
 	hop.msg
 	spectra.msg
 	pot.msg
+        track.msg
  )
 
  generate_messages()

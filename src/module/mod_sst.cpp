@@ -13,6 +13,48 @@ void process_pot_msg(const odas_ros::pot::ConstPtr& in_ros_msg, msg_pots_obj* in
 {
     odas_ros::track out_ros_msg;
 
+    in_msg->fS = in_ros_msg->fS;
+    in_msg->timeStamp = in_ros_msg->timeStamp;
+    in_msg->pots->nPots = in_ros_msg->nPots;
+
+    if(in_msg->fS == 0) {
+
+        ROS_INFO("Signal ended........");
+        out_ros_msg.fS = 0;
+
+        ros_publisher.publish(out_ros_msg);
+        return;
+    }
+
+    int nPots = in_msg->pots->nPots;
+
+    for(int iPots = 0; iPots < nPots * 4; iPots++) {
+
+        in_msg->pots->array[iPots] = in_ros_msg->data[iPots];
+    }
+
+
+    mod_sst_process(mod_sst);
+
+
+    out_ros_msg.fS = out_msg->fS;
+    out_ros_msg.timeStamp = out_msg->timeStamp;
+    out_ros_msg.nTracks = out_msg->tracks->nTracks;
+
+    int nTracks = out_ros_msg.nTracks;
+    out_ros_msg.ids = std::vector<long unsigned int>(nTracks);
+    out_ros_msg.data = std::vector<float>(nTracks * 3);
+
+    for(int iTracks = 0; iTracks < nTracks; iTracks++) {
+
+        out_ros_msg.ids[iTracks] = out_msg->tracks->ids[iTracks];
+    }
+
+    for(int iTracks = 0; iTracks < nTracks * 3; iTracks++) {
+
+        out_ros_msg.data[iTracks] = out_msg->tracks->array[iTracks];
+    }
+
     ros_publisher.publish(out_ros_msg);
 }
 
@@ -98,9 +140,18 @@ int main(int argc, char **argv)
 
     int frameSize;
 
-    if(!node_handle.getParam("general/frameSize", frameSize)) {
+    if(!node_handle.getParam("general/size/frameSize", frameSize)) {
 
-        ROS_ERROR("Couln'd retrieve general/frameSize");
+        ROS_ERROR("Couln'd retrieve general/size/frameSize");
+        return -1;
+    }
+
+
+    int hopSize;
+
+    if(!node_handle.getParam("general/size/hopSize", hopSize)) {
+
+        ROS_ERROR("Couln'd retrieve general/size/hopSize");
         return -1;
     }
 
@@ -378,9 +429,9 @@ int main(int argc, char **argv)
 
             current_active = active_vector[iGaussians];
 
-            act_weight = static_cast<float>(current_active["weight"]);
-            act_mu = static_cast<float>(current_active["mu"]);
-            act_sigma = sqrtf(static_cast<float>(current_active["sigma2"]));
+            act_weight = (float)static_cast<double>(current_active["weight"]);
+            act_mu = (float)static_cast<double>(current_active["mu"]);
+            act_sigma = sqrtf((float)static_cast<double>(current_active["sigma2"]));
 
             active_gaussians->array[iGaussians] = gaussian_1d_construct_weightmusigma(act_weight, act_mu, act_sigma);
         }
@@ -413,9 +464,9 @@ int main(int argc, char **argv)
 
             current_inactive = inactive_vector[iGaussians];
 
-            inact_weight = static_cast<float>(current_inactive["weight"]);
-            inact_mu = static_cast<float>(current_inactive["mu"]);
-            inact_sigma = sqrtf(static_cast<float>(current_inactive["sigma2"]));
+            inact_weight = (float)static_cast<double>(current_inactive["weight"]);
+            inact_mu = (float)static_cast<double>(current_inactive["mu"]);
+            inact_sigma = (float)sqrtf(static_cast<double>(current_inactive["sigma2"]));
 
             inactive_gaussians->array[iGaussians] = gaussian_1d_construct_weightmusigma(inact_weight, inact_mu, inact_sigma);
         }
@@ -497,10 +548,18 @@ int main(int argc, char **argv)
 
     msg_pots_cfg* in_msg_cfg = msg_pots_cfg_construct();
 
-    out_msg_cfg->fS = sample_rate->mu;
-    out_msg_cfg->nPots = nPots;
+    in_msg_cfg->fS = sample_rate->mu;
+    in_msg_cfg->nPots = nPots;
 
     msg_pots_obj* in_msg = msg_pots_construct(in_msg_cfg);
+
+
+    msg_tracks_cfg* out_msg_cfg = msg_tracks_cfg_construct();
+
+    out_msg_cfg->fS = sample_rate_mu;
+    out_msg_cfg->nTracks = nTracksMax;
+
+    msg_tracks_obj* out_msg = msg_tracks_construct(out_msg_cfg);
 
 
     mod_ssl_cfg* ssl_cfg = mod_ssl_cfg_construct();
@@ -529,7 +588,59 @@ int main(int argc, char **argv)
 
     mod_sst_cfg* sst_cfg = mod_sst_cfg_construct();
 
+    sst_cfg->mode = mode_char;
+    sst_cfg->nTracksMax = nTracksMax;
+    sst_cfg->hopSize = hopSize;
 
+    switch (mode_char) {
+
+    case 'k':
+        sst_cfg->sigmaQ = filter_parameters.at("sigmaQ");
+        break;
+
+    case 'p':
+        sst_cfg->nParticles = filter_parameters.at("nParticles");
+        sst_cfg->st_alpha = filter_parameters.at("st_alpha");
+        sst_cfg->st_beta = filter_parameters.at("st_beta");
+        sst_cfg->st_ratio = filter_parameters.at("st_ratio");
+        sst_cfg->ve_alpha = filter_parameters.at("ve_alpha");
+        sst_cfg->ve_beta = filter_parameters.at("ve_beta");
+        sst_cfg->ve_ratio = filter_parameters.at("ve_ratio");
+        sst_cfg->ac_alpha = filter_parameters.at("ac_alpha");
+        sst_cfg->ac_beta = filter_parameters.at("ac_beta");
+        sst_cfg->ac_ratio = filter_parameters.at("ac_ratio");
+        sst_cfg->Nmin = filter_parameters.at("Nmin");
+        break;
+
+    default:
+        ROS_ERROR("Unsuported filter mode");
+        return -1;
+        break;
+    }
+
+    sst_cfg->epsilon = epsilon;
+    sst_cfg->sigmaR_active = sigmaR_active;
+    sst_cfg->sigmaR_prob = sigmaR_prob;
+    sst_cfg->active_gmm = active_gaussians;
+    sst_cfg->inactive_gmm = inactive_gaussians;
+    sst_cfg->Pfalse = Pfalse;
+    sst_cfg->Pnew = Pnew;
+    sst_cfg->Ptrack = Ptrack;
+    sst_cfg->theta_new = theta_new;
+    sst_cfg->theta_prob = theta_prob;
+    sst_cfg->N_prob = N_prob;
+    sst_cfg->theta_inactive = theta_inactive;
+
+    sst_cfg->N_inactive = (unsigned int*)malloc(sizeof(unsigned int) * nTracksMax);
+
+    for(int iTracks = 0; iTracks < nTracksMax; iTracks++) {
+
+        sst_cfg->N_inactive[iTracks] = N_inactive_vector[iTracks];
+    }
+
+    mod_sst_obj* mod_sst = mod_sst_construct(sst_cfg, ssl_cfg, in_msg_cfg, out_msg_cfg);
+
+    mod_sst_connect(mod_sst, in_msg, out_msg);
 
 
     // Wait for subscribers
@@ -543,7 +654,6 @@ int main(int argc, char **argv)
         sleep(1);
     }
 
-
     // Proccess signal
 
     ROS_INFO("Processing signal........");
@@ -556,12 +666,17 @@ int main(int argc, char **argv)
 
     ROS_INFO("Destroying objects........");
 
+    mod_sst_disconnect(mod_sst);
+    mod_sst_destroy(mod_sst);
 
     mod_ssl_cfg_destroy(ssl_cfg);
-
+    mod_sst_cfg_destroy(sst_cfg);
 
     msg_pots_destroy(in_msg);
     msg_pots_cfg_destroy(in_msg_cfg);
+
+    msg_tracks_destroy(out_msg);
+    msg_tracks_cfg_destroy(out_msg_cfg);
 
 
     ROS_INFO("Quitting node........");
