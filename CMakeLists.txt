@@ -168,6 +168,44 @@ target_link_libraries(
 )
 
 
+# SSS module
+add_executable(
+        mod_sss
+        src/module/mod_sss.cpp
+)
+
+add_dependencies(
+        mod_sss
+        mars_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+        mod_sss
+        ${catkin_LIBRARIES}
+        ${ODAS_LOCATION}/lib/libodas.so
+)
+
+
+# SSPF module
+add_executable(
+        mod_sspf
+        src/module/mod_sspf.cpp
+        src/ros_parameters_parser.cpp
+        src/msg_synchroniser.cpp
+)
+
+add_dependencies(
+        mod_sspf
+        mars_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+        mod_sspf
+        ${catkin_LIBRARIES}
+        ${ODAS_LOCATION}/lib/libodas.so
+)
+
+
 #
 # Build sinks
 #

@@ -1,7 +1,7 @@
 <launch>
 	<group ns="odas">
 
-		<node pkg="odas_ros" name="xmos_array" type="src_soundcard" args="XMOS" output="screen">
+		<node pkg="odas_ros" name="xmos_array" type="src_soundcard" args="XMOS">
 
 			<param name="outTopic" value="raw_hops"/>
 
@@ -11,7 +11,7 @@
 			<param name="config/nBits" value="16"/>
 		</node>
 
-		<node pkg="odas_ros" name="mapping" type="mod_mapping" output="screen">
+		<node pkg="odas_ros" name="mapping" type="mod_mapping">
 
 			<param name="inTopic" value="raw_hops"/>
 			<param name="outTopic" value="map_hops"/>
@@ -23,7 +23,7 @@
 			<rosparam param="config/out/map">[1,2,3,4,5,6,7]</rosparam>
 		</node>
 
-		<node pkg="odas_ros" name="stft" type="mod_stft" output="screen">
+		<node pkg="odas_ros" name="stft" type="mod_stft">
 
 			<param name="inTopic" value="map_hops"/>
 			<param name="outTopic" value="stft_spectra"/>
@@ -36,7 +36,7 @@
 
 		</node>
 
-		<node pkg="odas_ros" name="ssl" type="mod_ssl" output="screen">
+		<node pkg="odas_ros" name="ssl" type="mod_ssl">
 
 			<param name="inTopic" value="stft_spectra"/>
 			<param name="outTopic" value="pots"/>
@@ -65,11 +65,10 @@
 
 		</node>
 
-		<node pkg="odas_ros" name="sst" type="mod_sst" output="screen">
+		<node pkg="odas_ros" name="sst" type="mod_sst">
 
 			<param name="inTopic" value="pots"/>
 			<param name="outTopic" value="tracks"/>
-			<param name="markerTopic" value="tracking"/>
 
 
 			<param name="general/epsilon" value="1E-20"/>
@@ -116,5 +115,50 @@
 			<param name="sst/kalman/sigmaQ" value="0.01"/>
 
 		</node>
+
+
+		<node pkg="odas_ros" name="sss" type="mod_sss">
+
+			<param name="spectraTopic" value="stft_spectra"/>
+			<param name="tracksTopic" value="tracks"/>
+			<param name="outTopic" value="sss_spectra"/>
+
+			<param name="general/frameSize" value="1024"/>
+
+			<param name="general/samplerate/mu" value="48000"/>
+			<param name="general/samplerate/sigma2" value="0.01"/>
+
+			<param name="general/speedofsound/mu" value="343.0"/>
+			<param name="general/speedofsound/sigma2" value="25.0"/>
+
+			<rosparam ns="general" file="$(find odas_ros)/launch/xmos_mics.yaml" />
+
+
+			<param name="config/nThetas" value="181"/>
+			<param name="config/gainMin" value="0.01"/>
+			<param name="config/nTracks" value="4"/>
+
+		</node>
+
+		<node pkg="odas_ros" name="sspf" type="mod_sspf" output="screen">
+
+			<param name="stftTopic" value="stft_spectra"/>
+			<param name="sssTopic" value="sss_spectra"/>
+			<param name="tracksTopic" value="tracks"/>
+			<param name="outTopic" value="sspf_spectra"/>
+
+			<param name="general/epsilon" value="1E-20"/>
+
+			<param name="general/frameSize" value="1024"/>
+			<param name="general/fS" value="48000"/>
+
+			<rosparam ns="general" file="$(find odas_ros)/launch/xmos_mics.yaml" />
+
+			<param name="config/nThetas" value="181"/>
+			<param name="config/gainMin" value="0.01"/>
+			<param name="config/nTracks" value="4"/>
+
+		</node>
+
 	</group>
 </launch>
