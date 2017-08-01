@@ -1,0 +1,174 @@
+<launch>
+	<group ns="odas">
+
+		<node pkg="odas_ros" name="xmos_array" type="src_hops_soundcard" args="XMOS" output="screen">
+
+			<param name="outTopic" value="raw_hops"/>
+
+			<param name="config/fS" value="48000"/>
+			<param name="config/hopSize" value="512"/>
+			<param name="config/nChannels" value="8"/>
+			<param name="config/nBits" value="16"/>
+		</node>
+
+		<node pkg="odas_ros" name="mapping" type="mod_mapping">
+
+			<param name="inTopic" value="raw_hops"/>
+			<param name="outTopic" value="map_hops"/>
+
+			<param name="config/fS" value="48000"/>
+			<param name="config/hopSize" value="512"/>
+
+			<param name="config/in/nChannels" value="8"/>
+			<rosparam param="config/out/map">[1,2,3,4,5,6,7]</rosparam>
+		</node>
+
+		<node pkg="odas_ros" name="stft" type="mod_stft">
+
+			<param name="inTopic" value="map_hops"/>
+			<param name="outTopic" value="stft_spectra"/>
+
+			<param name="config/nChannels" value="7"/>
+			<param name="config/fS" value="48000"/>
+
+			<param name="config/in/hopSize" value="512"/>
+			<param name="config/out/frameSize" value="1024"/>
+
+		</node>
+
+		<node pkg="odas_ros" name="ssl" type="mod_ssl">
+
+			<param name="inTopic" value="stft_spectra"/>
+			<param name="outTopic" value="pots"/>
+
+
+			<param name="general/epsilon" value="1E-20"/>
+			<param name="general/frameSize" value="1024"/>
+
+			<param name="general/samplerate/mu" value="48000"/>
+			<param name="general/samplerate/sigma2" value="0.01"/>
+
+			<param name="general/speedofsound/mu" value="343.0"/>
+			<param name="general/speedofsound/sigma2" value="25.0"/>
+
+			<rosparam ns="general" file="$(find odas_ros)/launch/xmos_mics.yaml" />
+
+			<rosparam param="general/spatialfilter/direction">[0.0, 0.0, 1.0]</rosparam>
+			<rosparam param="general/spatialfilter/angle">[80.0, 90.0]</rosparam>
+
+			<param name="config/nPots" value="4"/>
+			<param name="config/nMatches" value="10"/>
+			<param name="config/probMin" value="0.5"/>
+			<param name="config/nRefinedLevels" value="1"/>
+			<param name="config/gainMin" value="0.25"/>
+			<param name="config/nThetas" value="181"/>
+
+			<rosparam param="config/scans">[{'level': 2, 'delta': -1},{'level': 4, 'delta': -1}]</rosparam>
+
+		</node>
+
+		<node pkg="odas_ros" name="sst" type="mod_sst">
+
+			<param name="inTopic" value="pots"/>
+			<param name="outTopic" value="tracks"/>
+
+
+			<param name="general/epsilon" value="1E-20"/>
+
+			<param name="general/size/frameSize" value="1024"/>
+			<param name="general/size/hopSize" value="512"/>
+
+			<param name="general/samplerate/mu" value="48000"/>
+			<param name="general/samplerate/sigma2" value="0.01"/>
+
+			<param name="general/speedofsound/mu" value="343.0"/>
+			<param name="general/speedofsound/sigma2" value="25.0"/>
+
+			<rosparam ns="general" file="$(find odas_ros)/launch/xmos_mics.yaml" />
+
+			<rosparam param="general/spatialfilter/direction">[0.0, 0.0, 1.0]</rosparam>
+			<rosparam param="general/spatialfilter/angle">[80.0, 90.0]</rosparam>
+
+			<param name="ssl/nPots" value="4"/>
+			<param name="ssl/nMatches" value="10"/>
+			<param name="ssl/probMin" value="0.5"/>
+			<param name="ssl/nRefinedLevels" value="1"/>
+			<param name="ssl/gainMin" value="0.25"/>
+			<param name="ssl/nThetas" value="181"/>
+
+			<rosparam param="ssl/scans">[{'level': 2, 'delta': -1},{'level': 4, 'delta': -1}]</rosparam>
+
+
+			<param name="sst/mode" value="kalman"/>
+
+			<rosparam param="sst/active">[{'weight': 1.0, 'mu': 0.1, 'sigma2': 0.0001}]</rosparam>
+			<rosparam param="sst/inactive">[{'weight': 1.0, 'mu': 0.07, 'sigma2': 0.0001}]</rosparam>
+
+			<param name="sst/sigmaR2_prob" value="0.0025"/>
+			<param name="sst/sigmaR2_active" value="0.0225"/>
+			<param name="sst/Pfalse" value="0.1"/>
+			<param name="sst/Pnew" value="0.1"/>
+			<param name="sst/Ptrack" value="0.8"/>
+
+			<param name="sst/theta_new" value="0.9"/>
+			<param name="sst/N_prob" value="5"/>
+			<param name="sst/theta_prob" value="0.8"/>
+			<rosparam param="sst/N_inactive">[150, 200, 250, 250]</rosparam>
+			<param name="sst/theta_inactive" value="0.9"/>
+
+			<param name="sst/kalman/sigmaQ" value="0.01"/>
+
+		</node>
+
+
+		<node pkg="odas_ros" name="sss" type="mod_sss">
+
+			<param name="spectraTopic" value="stft_spectra"/>
+			<param name="tracksTopic" value="tracks"/>
+			<param name="outTopic" value="sss_spectra"/>
+
+			<param name="general/frameSize" value="1024"/>
+
+			<param name="general/samplerate/mu" value="48000"/>
+			<param name="general/samplerate/sigma2" value="0.01"/>
+
+			<param name="general/speedofsound/mu" value="343.0"/>
+			<param name="general/speedofsound/sigma2" value="25.0"/>
+
+			<rosparam ns="general" file="$(find odas_ros)/launch/xmos_mics.yaml" />
+
+			<rosparam param="general/spatialfilter/direction">[0.0, 0.0, 1.0]</rosparam>
+			<rosparam param="general/spatialfilter/angle">[80.0, 90.0]</rosparam>
+
+
+			<param name="config/nThetas" value="181"/>
+			<param name="config/gainMin" value="0.01"/>
+			<param name="config/nTracks" value="4"/>
+
+		</node>
+
+		<node pkg="odas_ros" name="sspf" type="mod_sspf">
+
+			<param name="stftTopic" value="stft_spectra"/>
+			<param name="sssTopic" value="sss_spectra"/>
+			<param name="tracksTopic" value="tracks"/>
+			<param name="outTopic" value="sspf_spectra"/>
+
+			<param name="general/epsilon" value="1E-20"/>
+
+			<param name="general/frameSize" value="1024"/>
+			<param name="general/fS" value="48000"/>
+
+			<rosparam ns="general" file="$(find odas_ros)/launch/xmos_mics.yaml" />
+
+			<rosparam param="general/spatialfilter/direction">[0.0, 0.0, 1.0]</rosparam>
+			<rosparam param="general/spatialfilter/angle">[80.0, 90.0]</rosparam>
+
+			<param name="config/nThetas" value="181"/>
+			<param name="config/gainMin" value="0.01"/>
+			<param name="config/nTracks" value="4"/>
+
+		</node>
+
+	</group>
+</launch>

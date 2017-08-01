@@ -8,7 +8,10 @@ set(ODAS_LOCATION $ENV{HOME}/Documents/odas)
 
 find_package(
 	catkin REQUIRED COMPONENTS
-	roscpp message_generation
+        roscpp
+        std_msgs
+        message_generation
+
 )
 
  add_message_files(
@@ -21,11 +24,10 @@ find_package(
 
  generate_messages()
 
-
-
 catkin_package(
 	CATKIN_DEPENDS
 	roscpp
+        std_msgs
 	message_runtime
 )
 
@@ -283,6 +285,25 @@ add_dependencies(
 
 target_link_libraries(
         snk_pots_file
+        ${catkin_LIBRARIES}
+        ${ODAS_LOCATION}/lib/libodas.so
+)
+
+
+# Pots to renard
+add_executable(
+        snk_pots_renard
+        src/sink/snk_pots_renard.cpp
+        src/ros_parameters_parser.cpp
+)
+
+add_dependencies(
+        snk_pots_renard
+        odas_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+        snk_pots_renard
         ${catkin_LIBRARIES}
         ${ODAS_LOCATION}/lib/libodas.so
 )

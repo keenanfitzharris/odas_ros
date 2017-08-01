@@ -10,7 +10,7 @@
 			<param name="config/nChannels" value="8"/>
 			<param name="config/nBits" value="32"/>
 		</node>
-
+<!--
 		<node pkg="odas_ros" name="sink_raw" type="snk_hops_file" args="/home/introlab/Desktop/latest_raw.raw" output="screen">
 
 			<param name="inTopic" value="raw_hops"/>
@@ -20,7 +20,7 @@
 			<param name="config/nChannels" value="8"/>
 			<param name="config/nBits" value="32"/>
 		</node>
-
+!-->
 		<node pkg="odas_ros" name="mapping" type="mod_mapping" output="screen">
 
 			<param name="inTopic" value="raw_hops"/>
@@ -76,7 +76,7 @@
 			<param name="general/speedofsound/mu" value="343.0"/>
 			<param name="general/speedofsound/sigma2" value="25.0"/>
 
-			<rosparam ns="general" file="whippet_mics.yaml" />
+			<rosparam ns="general" file="$(find odas_ros)/launch/whippet_mics.yaml" />
 
 			<rosparam param="general/spatialfilter/direction">[0.0, 0.0, 1.0]</rosparam>
 			<rosparam param="general/spatialfilter/angle">[80.0, 90.0]</rosparam>
@@ -91,5 +91,15 @@
 			<rosparam param="config/scans">[{'level': 2, 'delta': -1},{'level': 4, 'delta': -1}]</rosparam>
 
 		</node>
+
+		<node pkg="odas_ros" name="renard_link" type="snk_pots_renard" output="screen">
+
+			<param name="inTopic" value="pots"/>
+			<param name="outTopic" value="/mat_pots"/>
+			
+			<param name="config/baliseNo" value="103.0"/>
+
+		</node>
+
 	</group>
 </launch>
