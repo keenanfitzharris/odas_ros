@@ -47,7 +47,7 @@ add_executable(
 
 add_dependencies(
 	src_hops_file
-	mars_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -64,7 +64,7 @@ add_executable(
 
 add_dependencies(
         src_hops_soundcard
-	mars_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -105,7 +105,7 @@ add_executable(
 
 add_dependencies(
 	mod_mapping
-	mars_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -123,7 +123,7 @@ add_executable(
 
 add_dependencies(
 	mod_resample
-	mars_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -141,7 +141,7 @@ add_executable(
 
 add_dependencies(
 	mod_stft
-	mars_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -160,7 +160,7 @@ add_executable(
 
 add_dependencies(
 	mod_ssl
-	mars_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -179,7 +179,7 @@ add_executable(
 
 add_dependencies(
 	mod_sst
-	mars_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -198,7 +198,7 @@ add_executable(
 
 add_dependencies(
         mod_sss
-        mars_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -218,7 +218,7 @@ add_executable(
 
 add_dependencies(
         mod_sspf
-        mars_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -240,7 +240,7 @@ add_executable(
 
 add_dependencies(
 	snk_hops_file
-	mars_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -259,7 +259,7 @@ add_executable(
 
 add_dependencies(
         snk_spectra_file
-        mars_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -278,7 +278,7 @@ add_executable(
 
 add_dependencies(
         snk_pots_file
-        mars_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(
@@ -297,7 +297,7 @@ add_executable(
 
 add_dependencies(
         snk_tracks_file
-        mars_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp
 )
 
 target_link_libraries(

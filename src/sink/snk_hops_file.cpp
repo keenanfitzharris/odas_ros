@@ -59,22 +59,6 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    char *filename = argv[1];
-
-
-    std::ofstream test_file;
-    test_file.open(filename);
-
-    if(!test_file.is_open()) {
-
-        ROS_ERROR("Can't open specified output file");
-        return -1;
-    }
-
-    else {
-        test_file.close();
-    }
-
 
     // Get parameters from server
 

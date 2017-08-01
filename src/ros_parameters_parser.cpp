@@ -160,6 +160,29 @@ spatialfilter_obj* retrieve_spatialfilter(ros::NodeHandle &node_handle, std::str
     return spatial_filter;
 }
 
+
+samplerate_obj* retrieve_samplerate(ros::NodeHandle &node_handle, std::string parameter_name, int &error_count)
+{
+    samplerate_obj* sample_rate = samplerate_construct_zero();
+
+    sample_rate->mu = retrieve_int(node_handle, parameter_name + "/mu", error_count);
+    sample_rate->sigma2 = retrieve_float(node_handle, parameter_name + "/sigma2", error_count);
+
+    return sample_rate;
+}
+
+
+soundspeed_obj* retrieve_soundspeed(ros::NodeHandle &node_handle, std::string parameter_name, int &error_count)
+{
+    soundspeed_obj* sound_speed = soundspeed_construct_zero();
+
+    sound_speed->mu = retrieve_float(node_handle, parameter_name + "/mu", error_count);
+    sound_speed->sigma2 = retrieve_float(node_handle, parameter_name + "/sigma2", error_count);
+
+    return sound_speed;
+}
+
+
 char* check_filename_arg(int argc, char** argv, std::string prompt, bool check_file, int &error_count)
 {
     char *string;
