@@ -29,6 +29,7 @@ int main(int argc, char **argv)
     int fS = retrieve_int(node_handle, "general/fS", error_count);
     int halfFrameSize = retrieve_int(node_handle, "general/frameSize", error_count) / 2;
     mics_obj* mics = retrieve_mics(node_handle, "general/mics", error_count);
+    spatialfilter_obj* spatial_filter = retrieve_spatialfilter(node_handle, "general/spatialfilter", error_count);
     float epsilon = retrieve_string_float(node_handle, "general/epsilon", error_count);
 
     int nTracks = retrieve_int(node_handle, "config/nTracks", error_count);
@@ -66,6 +67,7 @@ int main(int argc, char **argv)
     msg_synchroniser.sspf_cfg->epsilon = epsilon;
     msg_synchroniser.sspf_cfg->gainMin = gainMin;
     msg_synchroniser.sspf_cfg->mics = mics;
+    msg_synchroniser.sspf_cfg->spatialfilter = spatial_filter;
     msg_synchroniser.sspf_cfg->nThetas = nThetas;
 
     msg_synchroniser.sspf_msg_cfg->fS = fS;

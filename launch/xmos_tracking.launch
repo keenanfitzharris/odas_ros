@@ -1,7 +1,7 @@
 <launch>
 	<group ns="odas">
 
-		<node pkg="odas_ros" name="xmos_array" type="src_soundcard" args="XMOS">
+		<node pkg="odas_ros" name="xmos_array" type="src_hops_soundcard" args="XMOS" output="screen">
 
 			<param name="outTopic" value="raw_hops"/>
 
@@ -53,6 +53,8 @@
 
 			<rosparam ns="general" file="$(find odas_ros)/launch/xmos_mics.yaml" />
 
+			<rosparam param="general/spatialfilter/direction">[0.0, 0.0, 1.0]</rosparam>
+			<rosparam param="general/spatialfilter/angle">[80.0, 90.0]</rosparam>
 
 			<param name="config/nPots" value="4"/>
 			<param name="config/nMatches" value="10"/>
@@ -84,6 +86,8 @@
 
 			<rosparam ns="general" file="$(find odas_ros)/launch/xmos_mics.yaml" />
 
+			<rosparam param="general/spatialfilter/direction">[0.0, 0.0, 1.0]</rosparam>
+			<rosparam param="general/spatialfilter/angle">[80.0, 90.0]</rosparam>
 
 			<param name="ssl/nPots" value="4"/>
 			<param name="ssl/nMatches" value="10"/>
@@ -133,6 +137,9 @@
 
 			<rosparam ns="general" file="$(find odas_ros)/launch/xmos_mics.yaml" />
 
+			<rosparam param="general/spatialfilter/direction">[0.0, 0.0, 1.0]</rosparam>
+			<rosparam param="general/spatialfilter/angle">[80.0, 90.0]</rosparam>
+
 
 			<param name="config/nThetas" value="181"/>
 			<param name="config/gainMin" value="0.01"/>
@@ -140,7 +147,7 @@
 
 		</node>
 
-		<node pkg="odas_ros" name="sspf" type="mod_sspf" output="screen">
+		<node pkg="odas_ros" name="sspf" type="mod_sspf">
 
 			<param name="stftTopic" value="stft_spectra"/>
 			<param name="sssTopic" value="sss_spectra"/>
@@ -153,6 +160,9 @@
 			<param name="general/fS" value="48000"/>
 
 			<rosparam ns="general" file="$(find odas_ros)/launch/xmos_mics.yaml" />
+
+			<rosparam param="general/spatialfilter/direction">[0.0, 0.0, 1.0]</rosparam>
+			<rosparam param="general/spatialfilter/angle">[80.0, 90.0]</rosparam>
 
 			<param name="config/nThetas" value="181"/>
 			<param name="config/gainMin" value="0.01"/>

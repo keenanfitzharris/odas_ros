@@ -28,6 +28,20 @@ float retrieve_float(ros::NodeHandle &node_handle, std::string parameter_name, i
 }
 
 
+std::vector<int> retrieve_int_vector(ros::NodeHandle &node_handle, std::string parameter_name, int &error_count) {
+
+    std::vector<int> param_vector;
+
+    if(!node_handle.getParam(parameter_name, param_vector)) {
+
+        ROS_ERROR("Couln'd retrieve %s", parameter_name.c_str());
+        error_count++;
+    }
+
+    return param_vector;
+}
+
+
 float retrieve_string_float(ros::NodeHandle &node_handle, std::string parameter_name, int &error_count)
 {
     std::string epsilon_str;
@@ -50,6 +64,20 @@ float retrieve_string_float(ros::NodeHandle &node_handle, std::string parameter_
     }
 
     return epsilon;
+}
+
+
+std::vector<float> retrieve_float_vector(ros::NodeHandle &node_handle, std::string parameter_name, int &error_count)
+{
+    std::vector<float> param_vector;
+
+    if(!node_handle.getParam(parameter_name, param_vector)) {
+
+        ROS_ERROR("Couln'd retrieve %s", parameter_name.c_str());
+        error_count++;
+    }
+
+    return param_vector;
 }
 
 
@@ -110,4 +138,58 @@ mics_obj* retrieve_mics(ros::NodeHandle &node_handle, std::string parameter_name
     }
 
     return mics;
+}
+
+
+spatialfilter_obj* retrieve_spatialfilter(ros::NodeHandle &node_handle, std::string parameter_name, int &error_count)
+{
+    spatialfilter_obj* spatial_filter = spatialfilter_construct_zero();
+
+    std::vector<float> direction_vector = retrieve_float_vector(node_handle, parameter_name+"/direction", error_count);
+    std::vector<float> angle_vector = retrieve_float_vector(node_handle, parameter_name+"/angle", error_count);
+
+    if(error_count < 1) {
+
+        for(int iDirections = 0; iDirections < 3; iDirections++)
+            spatial_filter->direction[iDirections] = direction_vector[iDirections];
+
+        spatial_filter->thetaAllPass = angle_vector[0];
+        spatial_filter->thetaNoPass = angle_vector[1];
+    }
+
+    return spatial_filter;
+}
+
+char* check_filename_arg(int argc, char** argv, std::string prompt, bool check_file, int &error_count)
+{
+    char *string;
+
+    if(argc != 2) {
+        ROS_ERROR("Invalid arguments, please specify %s", prompt.c_str());
+        error_count++;
+        return nullptr;
+    }
+
+    string = argv[1];
+
+    if(!check_file)
+        return string;
+
+    else {
+
+        std::ifstream test_file;
+        test_file.open(string);
+
+        if(!test_file.is_open()) {
+
+            ROS_ERROR("Can't open specified file");
+            error_count++;
+            return nullptr;
+        }
+
+        else {
+            test_file.close();
+            return string;
+        }
+    }
 }

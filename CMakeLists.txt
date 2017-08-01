@@ -58,20 +58,39 @@ target_link_libraries(
 
 # Hops from soundcard
 add_executable(
-	src_soundcard
-	src/source/src_soundcard.cpp
+        src_hops_soundcard
+        src/source/src_hops_soundcard.cpp
 )
 
 add_dependencies(
-	src_soundcard
+        src_hops_soundcard
 	mars_ros_generate_messages_cpp
 )
 
 target_link_libraries(
-	src_soundcard
+        src_hops_soundcard
 	${catkin_LIBRARIES}
 	${ODAS_LOCATION}/lib/libodas.so
 )
+
+
+# Spectra from file
+#add_executable(
+#        src_spectra_file
+#        src/source/src_spectra_file.cpp
+#        src/ros_parameters_parser.cpp
+#)
+#
+#add_dependencies(
+#        src_spectra_file
+#       mars_ros_generate_messages_cpp
+#)
+#
+#target_link_libraries(
+#        src_spectra_file
+#        ${catkin_LIBRARIES}
+#        ${ODAS_LOCATION}/lib/libodas.so
+#)
 
 
 #
@@ -136,6 +155,7 @@ target_link_libraries(
 add_executable(
 	mod_ssl
 	src/module/mod_ssl.cpp
+        src/ros_parameters_parser.cpp
 )
 
 add_dependencies(
@@ -154,6 +174,7 @@ target_link_libraries(
 add_executable(
 	mod_sst
 	src/module/mod_sst.cpp
+        src/ros_parameters_parser.cpp
 )
 
 add_dependencies(
@@ -172,6 +193,7 @@ target_link_libraries(
 add_executable(
         mod_sss
         src/module/mod_sss.cpp
+        src/ros_parameters_parser.cpp
 )
 
 add_dependencies(
@@ -225,4 +247,61 @@ target_link_libraries(
 	snk_hops_file
 	${catkin_LIBRARIES}
 	${ODAS_LOCATION}/lib/libodas.so
+)
+
+
+# Spectra to file
+add_executable(
+        snk_spectra_file
+        src/sink/snk_spectra_file.cpp
+        src/ros_parameters_parser.cpp
+)
+
+add_dependencies(
+        snk_spectra_file
+        mars_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+        snk_spectra_file
+        ${catkin_LIBRARIES}
+        ${ODAS_LOCATION}/lib/libodas.so
+)
+
+
+# Pots to file
+add_executable(
+        snk_pots_file
+        src/sink/snk_pots_file.cpp
+        src/ros_parameters_parser.cpp
+)
+
+add_dependencies(
+        snk_pots_file
+        mars_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+        snk_pots_file
+        ${catkin_LIBRARIES}
+        ${ODAS_LOCATION}/lib/libodas.so
+)
+
+
+# Tracks to file
+add_executable(
+        snk_tracks_file
+        src/sink/snk_tracks_file.cpp
+        src/ros_parameters_parser.cpp
+)
+
+add_dependencies(
+        snk_tracks_file
+        mars_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+        snk_tracks_file
+        ${catkin_LIBRARIES}
+        ${ODAS_LOCATION}/lib/libodas.so
 )

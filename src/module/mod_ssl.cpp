@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "odas_ros/spectra.h"
 #include "odas_ros/pot.h"
+#include "../ros_parameters_parser.h"
 
 extern "C" {
     #include "odas/odas.h"
@@ -73,6 +74,8 @@ int main(int argc, char **argv)
     // Get parameters from server
 
     ROS_INFO("Retreiving parameters........");
+
+    int error_count = 0;
 
     XmlRpc::XmlRpcValue mics_param, mic_buffer;
     mics_obj* mics;
@@ -287,6 +290,15 @@ int main(int argc, char **argv)
     }
 
 
+    spatialfilter_obj* spatialfilter = retrieve_spatialfilter(node_handle, "general/spatialfilter", error_count);
+
+    if(error_count > 0) {
+
+        ROS_ERROR("Failed to retrieve parameters");
+        return -1;
+    }
+
+
     // Contruct objects
 
     ROS_INFO("Constructing objects........");
@@ -311,6 +323,7 @@ int main(int argc, char **argv)
     mod_ssl_cfg* ssl_cfg = mod_ssl_cfg_construct();
 
     ssl_cfg->mics = mics;
+    ssl_cfg->spatialfilter = spatialfilter;
     ssl_cfg->samplerate = sample_rate;
     ssl_cfg->soundspeed = sound_speed;
     ssl_cfg->epsilon = epsilon;
