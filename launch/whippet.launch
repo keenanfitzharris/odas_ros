@@ -1,0 +1,95 @@
+<launch>
+	<group ns="odas">
+
+		<node pkg="odas_ros" name="Soundcard" type="src_hops_soundcard" args="8SoundsUSB" output="screen">
+
+			<param name="outTopic" value="raw_hops"/>
+
+			<param name="config/fS" value="48000"/>
+			<param name="config/hopSize" value="512"/>
+			<param name="config/nChannels" value="8"/>
+			<param name="config/nBits" value="32"/>
+		</node>
+
+		<node pkg="odas_ros" name="sink_raw" type="snk_hops_file" args="/home/introlab/Desktop/latest_raw.raw" output="screen">
+
+			<param name="inTopic" value="raw_hops"/>
+
+			<param name="config/fS" value="48000"/>
+			<param name="config/hopSize" value="512"/>
+			<param name="config/nChannels" value="8"/>
+			<param name="config/nBits" value="32"/>
+		</node>
+
+		<node pkg="odas_ros" name="mapping" type="mod_mapping" output="screen">
+
+			<param name="inTopic" value="raw_hops"/>
+			<param name="outTopic" value="map_hops"/>
+
+			<param name="config/fS" value="48000"/>
+			<param name="config/hopSize" value="512"/>
+
+			<param name="config/in/nChannels" value="8"/>
+			<rosparam param="config/out/map">[1,2,3,4,5,6,7,8]</rosparam>
+		</node>
+
+		<node pkg="odas_ros" name="resample" type="mod_resample" output="screen">
+
+			<param name="inTopic" value="map_hops"/>
+			<param name="outTopic" value="resample_hops"/>
+
+			<param name="config/nChannels" value="8"/>
+
+			<param name="config/in/fS" value="48000"/>
+			<param name="config/in/hopSize" value="512"/>
+
+			<param name="config/out/fS" value="48000"/>
+			<param name="config/out/hopSize" value="256"/>
+
+		</node>
+
+		<node pkg="odas_ros" name="stft" type="mod_stft" output="screen">
+
+			<param name="inTopic" value="map_hops"/>
+			<param name="outTopic" value="stft_spectra"/>
+
+			<param name="config/nChannels" value="8"/>
+			<param name="config/fS" value="48000"/>
+
+			<param name="config/in/hopSize" value="256"/>
+			<param name="config/out/frameSize" value="512"/>
+
+		</node>
+
+		<node pkg="odas_ros" name="ssl" type="mod_ssl" output="screen">
+
+			<param name="inTopic" value="stft_spectra"/>
+			<param name="outTopic" value="pots"/>
+
+
+			<param name="general/epsilon" value="1E-20"/>
+			<param name="general/frameSize" value="512"/>
+
+			<param name="general/samplerate/mu" value="48000"/>
+			<param name="general/samplerate/sigma2" value="0.01"/>
+
+			<param name="general/speedofsound/mu" value="343.0"/>
+			<param name="general/speedofsound/sigma2" value="25.0"/>
+
+			<rosparam ns="general" file="whippet_mics.yaml" />
+
+			<rosparam param="general/spatialfilter/direction">[0.0, 0.0, 1.0]</rosparam>
+			<rosparam param="general/spatialfilter/angle">[80.0, 90.0]</rosparam>
+			
+			<param name="config/nPots" value="4"/>
+			<param name="config/nMatches" value="10"/>
+			<param name="config/probMin" value="0.5"/>
+			<param name="config/nRefinedLevels" value="1"/>
+			<param name="config/gainMin" value="0.25"/>
+			<param name="config/nThetas" value="181"/>
+
+			<rosparam param="config/scans">[{'level': 2, 'delta': -1},{'level': 4, 'delta': -1}]</rosparam>
+
+		</node>
+	</group>
+</launch>
