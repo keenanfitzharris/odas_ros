@@ -6,7 +6,7 @@
 			<param name="outTopic" value="raw_hops"/>
 
 			<param name="config/fS" value="44100"/>
-			<param name="config/hopSize" value="512"/>
+			<param name="config/hopSize" value="256"/>
 			<param name="config/nChannels" value="8"/>
 			<param name="config/nBits" value="32"/>
 		</node>
@@ -16,7 +16,7 @@
 			<param name="inTopic" value="raw_hops"/>
 
 			<param name="config/fS" value="44100"/>
-			<param name="config/hopSize" value="512"/>
+			<param name="config/hopSize" value="256"/>
 			<param name="config/nChannels" value="8"/>
 			<param name="config/nBits" value="32"/>
 		</node>
@@ -27,25 +27,10 @@
 			<param name="outTopic" value="map_hops"/>
 
 			<param name="config/fS" value="44100"/>
-			<param name="config/hopSize" value="512"/>
+			<param name="config/hopSize" value="256"/>
 
 			<param name="config/in/nChannels" value="8"/>
 			<rosparam param="config/out/map">[1,2,3,4,5,6,7,8]</rosparam>
-		</node>
-
-		<node pkg="odas_ros" name="resample" type="mod_resample" output="screen">
-
-			<param name="inTopic" value="map_hops"/>
-			<param name="outTopic" value="resample_hops"/>
-
-			<param name="config/nChannels" value="8"/>
-
-			<param name="config/in/fS" value="44100"/>
-			<param name="config/in/hopSize" value="512"/>
-
-			<param name="config/out/fS" value="44100"/>
-			<param name="config/out/hopSize" value="256"/>
-
 		</node>
 
 		<node pkg="odas_ros" name="stft" type="mod_stft" output="screen">
