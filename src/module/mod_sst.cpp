@@ -43,12 +43,11 @@ void process_pot_msg(const odas_ros::pot::ConstPtr& in_ros_msg, msg_pots_obj* in
     out_ros_msg.nTracks = out_msg->tracks->nTracks;
 
     int nTracks = out_ros_msg.nTracks;
-    out_ros_msg.ids = std::vector<long long unsigned int>(nTracks);
     out_ros_msg.data = std::vector<float>(nTracks * 3);
 
     for(int iTracks = 0; iTracks < nTracks; iTracks++) {
 
-        out_ros_msg.ids[iTracks] = out_msg->tracks->ids[iTracks];
+        out_ros_msg.ids.push_back(out_msg->tracks->ids[iTracks]);
     }
 
     for(int iTracks = 0; iTracks < nTracks * 3; iTracks++) {
