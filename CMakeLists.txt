@@ -290,6 +290,25 @@ target_link_libraries(
 )
 
 
+# Pots to socket
+add_executable(
+        snk_pots_socket
+        src/sink/snk_pots_socket.cpp
+        src/ros_parameters_parser.cpp
+)
+
+add_dependencies(
+        snk_pots_socket
+        odas_ros_generate_messages_cpp
+)
+
+target_link_libraries(
+        snk_pots_socket
+        ${catkin_LIBRARIES}
+        ${ODAS_LOCATION}/lib/libodas.so
+)
+
+
 # Pots to renard
 add_executable(
         snk_pots_renard
