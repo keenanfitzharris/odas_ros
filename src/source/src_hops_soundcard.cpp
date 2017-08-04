@@ -114,6 +114,10 @@ int main(int argc, char **argv)
     if(card_found) {
 
         ROS_INFO("Found soundcard at hw:%d,%d", hw_number, device_number);
+
+        std::stringstream record_string;
+        record_string << "arecord -d 1  hw:" << hw_number << "," << device_number;
+        exec(record_string.str().c_str());
     }
 
     else {
