@@ -118,6 +118,9 @@ int main(int argc, char **argv)
         std::stringstream record_string;
         record_string << "arecord -d 1  hw:" << hw_number << "," << device_number;
         exec(record_string.str().c_str());
+	ROS_INFO("Waiting for soundcard........");
+	sleep(5);
+	ROS_INFO("Recording finished........");
     }
 
     else {
