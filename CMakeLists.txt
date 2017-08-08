@@ -4,7 +4,7 @@ project(odas_ros)
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
 # Root folder of ODAS library
-set(ODAS_LOCATION $ENV{HOME}/Documents/odas)
+set(ODAS_LOCATION $ENV{HOME}/odas)
 
 find_package(
 	catkin REQUIRED COMPONENTS
