@@ -1,7 +1,8 @@
 <launch>
 	
-<!--	<arg name="file"/> -->
+	<arg name="time"/>
 	<arg name="id"/>
+	<arg name="file" value="$(env HOME)/$(arg time)_M($arg id).raw"/>
 	
 	<group ns="odas">
 
@@ -15,7 +16,7 @@
 			<param name="config/nBits" value="32"/>
 		</node>
 
-		<node pkg="odas_ros" name="sink_raw" type="snk_hops_file" args="$(env HOME)/M$(arg id).raw" output="screen">
+		<node pkg="odas_ros" name="sink_raw" type="snk_hops_file" args="$(arg file)" output="screen">
 
 			<param name="inTopic" value="raw_hops"/>
 
