@@ -14,8 +14,8 @@
 			<param name="config/nChannels" value="8"/>
 			<param name="config/nBits" value="32"/>
 		</node>
-<!--
-		<node pkg="odas_ros" name="sink_raw" type="snk_hops_file" args="$(arg file)" output="screen">
+
+		<node pkg="odas_ros" name="sink_raw" type="snk_hops_file" args="$(env HOME)/M$(arg id).raw" output="screen">
 
 			<param name="inTopic" value="raw_hops"/>
 
@@ -24,7 +24,7 @@
 			<param name="config/nChannels" value="8"/>
 			<param name="config/nBits" value="32"/>
 		</node>
--->
+
 		<node pkg="odas_ros" name="mapping" type="mod_mapping" output="screen">
 
 			<param name="inTopic" value="raw_hops"/>
