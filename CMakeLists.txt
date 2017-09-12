@@ -32,13 +32,13 @@ catkin_package(
 include(ExternalProject)
 ExternalProject_Add(odas_lib
 	GIT_REPOSITORY https://github.com/introlab/odas.git
-	GIT_TAG dev
-	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/odas_git
+	GIT_TAG 85f27f082330162f80b584ece28fabbdb5012a62
+	SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/odas_git
 	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:String=${CMAKE_CURRENT_BINARY_DIR}
 )
 
 # Root folder of ODAS library
-set(ODAS_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/odas_git)
+set(ODAS_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/odas_git)
 set(ODAS_LIBRARY "-L${CMAKE_CURRENT_BINARY_DIR}/lib -lodas")
 
 
