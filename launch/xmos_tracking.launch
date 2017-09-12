@@ -10,7 +10,7 @@
 			<param name="config/nChannels" value="8"/>
 			<param name="config/nBits" value="16"/>
 		</node>
-
+<!--
 		<node pkg="odas_ros" name="mapping" type="mod_mapping">
 
 			<param name="inTopic" value="raw_hops"/>
@@ -169,6 +169,9 @@
 			<param name="config/nTracks" value="4"/>
 
 		</node>
+
+
+-->
 
 	</group>
 </launch>

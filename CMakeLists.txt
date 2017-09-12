@@ -11,6 +11,18 @@ find_package(
 
 )
 
+#External ODAS git repository
+#TODO change revision number to latest suitable version
+include(ExternalProject)
+ExternalProject_Add(odas_lib
+	GIT_REPOSITORY https://github.com/introlab/odas.git
+	GIT_TAG 85f27f082330162f80b584ece28fabbdb5012a62
+#	GIT_TAG dev
+	BUILD_IN_SOURCE
+	SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/odas_git
+	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:String=${CATKIN_DEVEL_PREFIX}
+)
+
 add_message_files(
 	FILES
 	hop.msg
@@ -26,21 +38,12 @@ catkin_package(
 	roscpp
         std_msgs
 	message_runtime
-)
-
-#External ODAS git repository
-#TODO change revision number to latest suitable version
-include(ExternalProject)
-ExternalProject_Add(odas_lib
-	GIT_REPOSITORY https://github.com/introlab/odas.git
-	GIT_TAG 85f27f082330162f80b584ece28fabbdb5012a62
-	SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/odas_git
-	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:String=${CMAKE_CURRENT_BINARY_DIR}
+	LIBRARIES odas_lib
 )
 
 # Root folder of ODAS library
 set(ODAS_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/odas_git)
-set(ODAS_LIBRARY "-L${CMAKE_CURRENT_BINARY_DIR}/lib -lodas")
+set(ODAS_LIBRARY "-L${CATKIN_DEVEL_PREFIX}/lib -lodas")
 
 
 include_directories(
