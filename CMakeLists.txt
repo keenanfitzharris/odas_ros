@@ -1,10 +1,7 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.0)
 project(odas_ros)
 
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
-
-# Root folder of ODAS library
-set(ODAS_LOCATION $ENV{HOME}/odas)
 
 find_package(
 	catkin REQUIRED COMPONENTS
@@ -14,7 +11,7 @@ find_package(
 
 )
 
- add_message_files(
+add_message_files(
 	FILES
 	hop.msg
 	spectra.msg
@@ -22,7 +19,7 @@ find_package(
         track.msg
  )
 
- generate_messages()
+generate_messages()
 
 catkin_package(
 	CATKIN_DEPENDS
@@ -30,6 +27,19 @@ catkin_package(
         std_msgs
 	message_runtime
 )
+
+#External ODAS git repository
+include(ExternalProject)
+ExternalProject_Add(odas_lib
+	GIT_REPOSITORY https://github.com/introlab/odas.git
+	GIT_TAG dev
+	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/odas_git
+)
+
+# Root folder of ODAS library
+set(ODAS_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/odas_git)
+set(ODAS_LIBRARY odas)
+
 
 include_directories(
  	${catkin_INCLUDE_DIRS}
@@ -42,20 +52,19 @@ include_directories(
 #
 
 # Hops from file
-add_executable(
-	src_hops_file
+add_executable(src_hops_file 
 	src/source/src_hops_file.cpp
 )
 
-add_dependencies(
-	src_hops_file
-	odas_ros_generate_messages_cpp
+add_dependencies(src_hops_file 
+	odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
 	src_hops_file
 	${catkin_LIBRARIES}
-	${ODAS_LOCATION}/lib/libodas.so
+	${ODAS_LIBRARY}
 )
 
 # Hops from soundcard
@@ -66,13 +75,14 @@ add_executable(
 
 add_dependencies(
         src_hops_soundcard
-	odas_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
         src_hops_soundcard
 	${catkin_LIBRARIES}
-	${ODAS_LOCATION}/lib/libodas.so
+	${ODAS_LIBRARY}
 )
 
 
@@ -91,7 +101,7 @@ target_link_libraries(
 #target_link_libraries(
 #        src_spectra_file
 #        ${catkin_LIBRARIES}
-#        ${ODAS_LOCATION}/lib/libodas.so
+#        ${ODAS_LIBRARY}
 #)
 
 
@@ -107,13 +117,13 @@ add_executable(
 
 add_dependencies(
 	mod_mapping
-	odas_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
 	mod_mapping
 	${catkin_LIBRARIES}
-	${ODAS_LOCATION}/lib/libodas.so
+	${ODAS_LIBRARY}
 )
 
 
@@ -125,13 +135,13 @@ add_executable(
 
 add_dependencies(
 	mod_resample
-	odas_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
 	mod_resample
 	${catkin_LIBRARIES}
-	${ODAS_LOCATION}/lib/libodas.so
+	${ODAS_LIBRARY}
 )
 
 
@@ -143,13 +153,13 @@ add_executable(
 
 add_dependencies(
 	mod_stft
-	odas_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
 	mod_stft
 	${catkin_LIBRARIES}
-	${ODAS_LOCATION}/lib/libodas.so
+	${ODAS_LIBRARY}
 )
 
 
@@ -162,13 +172,13 @@ add_executable(
 
 add_dependencies(
 	mod_ssl
-	odas_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
 	mod_ssl
 	${catkin_LIBRARIES}
-	${ODAS_LOCATION}/lib/libodas.so
+	${ODAS_LIBRARY}
 )
 
 
@@ -181,13 +191,13 @@ add_executable(
 
 add_dependencies(
 	mod_sst
-	odas_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
 	mod_sst
 	${catkin_LIBRARIES}
-	${ODAS_LOCATION}/lib/libodas.so
+	${ODAS_LIBRARY}
 )
 
 
@@ -206,7 +216,7 @@ add_dependencies(
 target_link_libraries(
         mod_sss
         ${catkin_LIBRARIES}
-        ${ODAS_LOCATION}/lib/libodas.so
+        ${ODAS_LIBRARY}
 )
 
 
@@ -220,13 +230,13 @@ add_executable(
 
 add_dependencies(
         mod_sspf
-        odas_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
         mod_sspf
         ${catkin_LIBRARIES}
-        ${ODAS_LOCATION}/lib/libodas.so
+        ${ODAS_LIBRARY}
 )
 
 
@@ -242,13 +252,13 @@ add_executable(
 
 add_dependencies(
 	snk_hops_file
-	odas_ros_generate_messages_cpp
+	odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
 	snk_hops_file
 	${catkin_LIBRARIES}
-	${ODAS_LOCATION}/lib/libodas.so
+	${ODAS_LIBRARY}
 )
 
 
@@ -261,13 +271,13 @@ add_executable(
 
 add_dependencies(
         snk_spectra_file
-        odas_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
         snk_spectra_file
         ${catkin_LIBRARIES}
-        ${ODAS_LOCATION}/lib/libodas.so
+        ${ODAS_LIBRARY}
 )
 
 
@@ -280,13 +290,13 @@ add_executable(
 
 add_dependencies(
         snk_pots_file
-        odas_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
         snk_pots_file
         ${catkin_LIBRARIES}
-        ${ODAS_LOCATION}/lib/libodas.so
+        ${ODAS_LIBRARY}
 )
 
 
@@ -299,13 +309,13 @@ add_executable(
 
 add_dependencies(
         snk_pots_socket
-        odas_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
         snk_pots_socket
         ${catkin_LIBRARIES}
-        ${ODAS_LOCATION}/lib/libodas.so
+        ${ODAS_LIBRARY}
 )
 
 
@@ -318,13 +328,13 @@ add_executable(
 
 add_dependencies(
         snk_pots_renard
-        odas_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
         snk_pots_renard
         ${catkin_LIBRARIES}
-        ${ODAS_LOCATION}/lib/libodas.so
+        ${ODAS_LIBRARY}
 )
 
 
@@ -337,11 +347,11 @@ add_executable(
 
 add_dependencies(
         snk_tracks_file
-        odas_ros_generate_messages_cpp
+        odas_ros_generate_messages_cpp odas_lib
 )
 
 target_link_libraries(
         snk_tracks_file
         ${catkin_LIBRARIES}
-        ${ODAS_LOCATION}/lib/libodas.so
+        ${ODAS_LIBRARY}
 )
