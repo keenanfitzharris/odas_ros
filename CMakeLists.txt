@@ -34,11 +34,12 @@ ExternalProject_Add(odas_lib
 	GIT_REPOSITORY https://github.com/introlab/odas.git
 	GIT_TAG dev
 	SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/odas_git
+	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:String=${CMAKE_CURRENT_BINARY_DIR}
 )
 
 # Root folder of ODAS library
 set(ODAS_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/odas_git)
-set(ODAS_LIBRARY odas)
+set(ODAS_LIBRARY "-L${CMAKE_CURRENT_BINARY_DIR}/lib -lodas")
 
 
 include_directories(
@@ -117,7 +118,8 @@ add_executable(
 
 add_dependencies(
 	mod_mapping
-	odas_ros_generate_messages_cpp odas_lib
+	odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
@@ -135,7 +137,8 @@ add_executable(
 
 add_dependencies(
 	mod_resample
-	odas_ros_generate_messages_cpp odas_lib
+	odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
@@ -153,7 +156,8 @@ add_executable(
 
 add_dependencies(
 	mod_stft
-	odas_ros_generate_messages_cpp odas_lib
+	odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
@@ -172,7 +176,8 @@ add_executable(
 
 add_dependencies(
 	mod_ssl
-	odas_ros_generate_messages_cpp odas_lib
+	odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
@@ -191,7 +196,8 @@ add_executable(
 
 add_dependencies(
 	mod_sst
-	odas_ros_generate_messages_cpp odas_lib
+	odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
@@ -201,43 +207,44 @@ target_link_libraries(
 )
 
 
-# SSS module
-add_executable(
-        mod_sss
-        src/module/mod_sss.cpp
-        src/ros_parameters_parser.cpp
-)
+# SSS module (disabled for now because of API change)
+#add_executable(
+#        mod_sss
+#        src/module/mod_sss.cpp
+#        src/ros_parameters_parser.cpp
+#)
 
-add_dependencies(
-        mod_sss
-        odas_ros_generate_messages_cpp
-)
+#add_dependencies(
+#        mod_sss
+#        odas_ros_generate_messages_cpp
+#)
 
-target_link_libraries(
-        mod_sss
-        ${catkin_LIBRARIES}
-        ${ODAS_LIBRARY}
-)
+#target_link_libraries(
+#        mod_sss
+#        ${catkin_LIBRARIES}
+#        ${ODAS_LIBRARY}
+#)
 
 
-# SSPF module
-add_executable(
-        mod_sspf
-        src/module/mod_sspf.cpp
-        src/ros_parameters_parser.cpp
-        src/msg_synchroniser.cpp
-)
+# SSPF module  (disabled for now because of API change)
+#add_executable(
+#        mod_sspf
+#        src/module/mod_sspf.cpp
+#        src/ros_parameters_parser.cpp
+#        src/msg_synchroniser.cpp
+#)
 
-add_dependencies(
-        mod_sspf
-        odas_ros_generate_messages_cpp odas_lib
-)
+#add_dependencies(
+#        mod_sspf
+#        odas_ros_generate_messages_cpp 
+#	 odas_lib
+#)
 
-target_link_libraries(
-        mod_sspf
-        ${catkin_LIBRARIES}
-        ${ODAS_LIBRARY}
-)
+#target_link_libraries(
+#        mod_sspf
+#        ${catkin_LIBRARIES}
+#        ${ODAS_LIBRARY}
+#)
 
 
 #
@@ -252,7 +259,8 @@ add_executable(
 
 add_dependencies(
 	snk_hops_file
-	odas_ros_generate_messages_cpp odas_lib
+	odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
@@ -271,7 +279,8 @@ add_executable(
 
 add_dependencies(
         snk_spectra_file
-        odas_ros_generate_messages_cpp odas_lib
+        odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
@@ -290,7 +299,8 @@ add_executable(
 
 add_dependencies(
         snk_pots_file
-        odas_ros_generate_messages_cpp odas_lib
+        odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
@@ -309,7 +319,8 @@ add_executable(
 
 add_dependencies(
         snk_pots_socket
-        odas_ros_generate_messages_cpp odas_lib
+        odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
@@ -328,7 +339,8 @@ add_executable(
 
 add_dependencies(
         snk_pots_renard
-        odas_ros_generate_messages_cpp odas_lib
+        odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
@@ -347,7 +359,8 @@ add_executable(
 
 add_dependencies(
         snk_tracks_file
-        odas_ros_generate_messages_cpp odas_lib
+        odas_ros_generate_messages_cpp 
+	odas_lib
 )
 
 target_link_libraries(
