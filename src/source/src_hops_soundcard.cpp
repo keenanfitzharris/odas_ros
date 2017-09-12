@@ -115,12 +115,16 @@ int main(int argc, char **argv)
 
         ROS_INFO("Found soundcard at hw:%d,%d", hw_number, device_number);
 
+//TODO
+//DL - What is the use of this???
+/*
         std::stringstream record_string;
         record_string << "arecord -d 1  hw:" << hw_number << "," << device_number;
         exec(record_string.str().c_str());
 	ROS_INFO("Waiting for soundcard........");
 	sleep(5);
 	ROS_INFO("Recording finished........");
+*/
     }
 
     else {
@@ -165,6 +169,12 @@ int main(int argc, char **argv)
         ROS_ERROR("Couln'd retrieve outTopic");
         return -1;
     }
+    
+    ROS_INFO("config/fS : %i",fS);
+    ROS_INFO("config/hopSize : %i",hopSize);
+    ROS_INFO("config/nChannels : %i",nChannels);
+    ROS_INFO("config/nBits : %i",nBits);
+    ROS_INFO("config/outTopic : %s",outTopic.c_str());
 
     ros::Publisher ros_publisher = public_handle.advertise<odas_ros::hop>(outTopic, 2000);
 
