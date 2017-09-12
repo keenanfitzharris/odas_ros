@@ -29,6 +29,7 @@ catkin_package(
 )
 
 #External ODAS git repository
+#TODO change revision number to latest suitable version
 include(ExternalProject)
 ExternalProject_Add(odas_lib
 	GIT_REPOSITORY https://github.com/introlab/odas.git
