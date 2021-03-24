@@ -1,6 +1,6 @@
 <launch>
 
-    <arg name="config_file"      default="securbot_pioneer_ros.cfg" />
+    <arg name="config_file"      default="kinect.cfg" />
 
     <node pkg="odas_ros" type="server.py" name="odas_server" output="screen">
       <remap from="tracked_sources"	to="/sounds/tracked_sources"/>
